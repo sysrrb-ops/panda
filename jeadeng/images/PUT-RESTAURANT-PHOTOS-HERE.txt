@@ -1,0 +1,1 @@
+นำรูปจริงของร้านมาใส่ในโฟลเดอร์นี้ เช่น khaifok.jpg, restaurant-1.jpg, restaurant-2.jpg, menu-1.jpg

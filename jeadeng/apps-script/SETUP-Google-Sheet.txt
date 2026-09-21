@@ -1,0 +1,46 @@
+ร้านเจ๊แดง เจ้าตำรับไข่ฟก
+คู่มือต่อระบบจองโต๊ะกับ Google Sheet
+
+1) สร้าง Google Sheet
+- เข้า Google Sheets แล้วสร้างไฟล์ใหม่ เช่น “ร้านเจ๊แดง - รายการจองโต๊ะ”
+- ไม่ต้องสร้างหัวตารางเอง ระบบจะสร้างชีตชื่อ Reservations และหัวคอลัมน์ให้อัตโนมัติ
+
+2) ใส่ Google Apps Script
+- ใน Google Sheet เลือก Extensions > Apps Script
+- ลบโค้ดเดิมใน Code.gs
+- เปิดไฟล์ Code.gs ที่ให้มาชุดนี้ แล้วคัดลอกทั้งหมดไปวาง
+- กด Save
+- ใน Project Settings แนะนำตั้ง Time zone = (GMT+07:00) Bangkok
+
+3) Deploy เป็น Web App
+- กด Deploy > New deployment
+- Select type: Web app
+- Execute as: Me
+- Who has access: Anyone
+- กด Deploy และอนุญาตสิทธิ์ตามขั้นตอนของ Google
+- คัดลอก URL ที่ลงท้ายด้วย /exec
+
+4) เชื่อม URL เข้ากับเว็บไซต์
+- เปิดไฟล์ jaedang-khaifok-google-sheet.html ด้วย Notepad / VS Code
+- ค้นหาบรรทัด:
+  const APPS_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+- เปลี่ยนข้อความในเครื่องหมาย ' ' เป็น URL /exec จากข้อ 3
+ตัวอย่าง:
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec';
+- Save ไฟล์
+
+5) ทดลอง
+- เปิดเว็บไซต์
+- กดจองโต๊ะและกรอกข้อมูลทดสอบ
+- เปิด Google Sheet > ชีต Reservations
+- ควรพบข้อมูลใหม่ โดยสถานะเริ่มต้นเป็น “รอยืนยัน”
+
+6) นำขึ้น Host
+- เปลี่ยนชื่อ jaedang-khaifok-google-sheet.html เป็น index.html
+- อัปโหลด index.html พร้อมโฟลเดอร์รูปภาพ (ถ้ามี) ไป Netlify / GitHub Pages / Host ที่ใช้
+
+ข้อสำคัญ
+- Google Sheet ไม่ควรตั้ง Share = Anyone with the link สำหรับลูกค้า เว็บไม่ต้องใช้สิทธิ์เปิด Sheet โดยตรง
+- ลูกค้าส่งข้อมูลผ่าน Apps Script Web App ส่วน Sheet ควรแชร์เฉพาะเจ้าของร้าน/พนักงานที่เกี่ยวข้อง
+- หลังแก้ Code.gs ในอนาคต ต้อง Deploy เวอร์ชันใหม่หรือ Edit deployment ให้ชี้เวอร์ชันล่าสุด
+- เว็บชุดนี้ถือว่าการส่ง HTTP request สำเร็จเป็น “ส่งคำขอแล้ว” เพราะใช้ no-cors; หากต้องการระบบ production ที่ตรวจคำตอบจาก server, กัน spam, จำกัดจำนวนโต๊ะ และตรวจโต๊ะว่างแบบ real-time ควรเพิ่ม backend/API อีกชั้น
